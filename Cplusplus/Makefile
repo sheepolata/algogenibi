@@ -16,7 +16,7 @@ OBJ := $(addprefix $(OBJ_DIR)/,$(notdir $(SRCS:.cpp=.o)))
 
 #*******
 
-CPPFLAGS = -g -Wall -std=c++11
+CPPFLAGS = -g -Wall -std=c++14
 
 LIB_DIR = -L/usr/include/
 LIBS = -L/usr/local/lib 
