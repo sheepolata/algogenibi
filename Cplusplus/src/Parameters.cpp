@@ -1,6 +1,6 @@
 #include "../headers/Parameters.h"
 
-Parameters::Parameters(float val, float mini, float maxi) : value(val), min(mini), max(maxi){
+Parameters::Parameters(double val, double mini, double maxi) : value(val), min(mini), max(maxi){
 
 }
 
@@ -8,25 +8,28 @@ Parameters::~Parameters(){
 
 }
 
-float Parameters::getValue(){
+double Parameters::getValue(){
 	return this->value;
 }
-float Parameters::getMin(){
+void Parameters::setValue(double v){
+	this->value = v;
+}
+double Parameters::getMin(){
 	return this->min;
 }
-float Parameters::getMax(){
+double Parameters::getMax(){
 	return this->max;
 }
 
 bool Parameters::isValid(){
-	return this->value < this->max && this->value > this->min;
+	return this->value <= this->max && this->value >= this->min;
 }
 
 void Parameters::mutate(){
-	float change;
-	float rnd;
-	rnd = rand() / (float)RAND_MAX;
-	change = (MUTATION_RATE/2.f) - rnd * MUTATION_RATE;
+	double change;
+	double rnd;
+	rnd = rand() / (double)RAND_MAX;
+	change = (MUTATION_RATE/2.) - rnd * MUTATION_RATE;
 	this->value *= 1 + change;
 }
 

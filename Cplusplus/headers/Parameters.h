@@ -5,25 +5,26 @@
 #include <stdio.h>
 #include <math.h>
 
-const float W = 1.5f;//cm, largeur max de l'oeil
-const float I = exp(6); //Intensite lumineuse
+const double W = 1.5;//cm, largeur max de l'oeil
+const double I = exp(6); //Intensite lumineuse
 
-const float CROSSOVER_RATE 	= 0.20f;
-const float MUTATION_RATE 	= 0.01f;
-const float MUTATION_CHANCE = 0.05f;
-const float PRECISION		= 0.00001f;
-const int POP_SIZE			= 100;
-const int NB_GEN			= 100;
+const double CROSSOVER_RATE 	= 0.20;
+const double MUTATION_RATE 	= 0.01;
+const double MUTATION_CHANCE = 0.05; //5-25%
+const double PRECISION		= 0.0001;
+const int POP_SIZE			= 10;
+const int NB_GEN			= 10;
 
 class Parameters
 {
 public:
-	Parameters(float, float, float);
+	Parameters(double, double, double);
 	~Parameters();
 
-	float getValue();
-	float getMin();
-	float getMax();
+	double getValue();
+	void setValue(double);
+	double getMin();
+	double getMax();
 
 	bool isValid();
 
@@ -39,9 +40,9 @@ public:
 	}*/
 
 private:
-	float value;
-	float min;
-	float max;
+	double value;
+	double min;
+	double max;
 };
 
 #endif

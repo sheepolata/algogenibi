@@ -4,7 +4,7 @@
 #include <map>
 #include "Parameters.h"
 
-extern std::map<float, float>* dico;
+extern std::map<double, double>* dico;
 
 class ProtoEye
 {
@@ -15,10 +15,16 @@ public:
 	bool isValid();
 
 	//Algorithm Functions
-	float p();
-	float a();
-	float r1();
-	float teta();
+	double p();
+	double a();
+	double r1();
+	double teta();
+
+	bool isDead();
+
+	double v();
+
+	friend ProtoEye* breed(ProtoEye const &, ProtoEye const &);
 
 private:
 	Parameters* rho_c;
@@ -26,6 +32,4 @@ private:
 	Parameters* phi_1;
 	Parameters* n0;
 };
-
-
 #endif
