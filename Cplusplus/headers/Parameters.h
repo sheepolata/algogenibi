@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h> 
+#include <math.h>
 
 const float W = 1.5f;//cm, largeur max de l'oeil
 const float I = exp(6); //Intensite lumineuse

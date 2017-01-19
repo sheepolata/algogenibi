@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
-#include "../headers/ProtoEye.h"
 #include "../headers/Parameters.h"
+#include "../headers/ProtoEye.h"
 
 int main(int argc, char const *argv[])
 {
