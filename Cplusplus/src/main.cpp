@@ -60,6 +60,9 @@ int main(int argc, char const *argv[])
 
 	load_tsv();
 
+	std::ofstream outfile;
+  	outfile.open ("best_per_gen.tsv");
+
 	std::vector<ProtoEye *>* pop = new std::vector<ProtoEye *>();
 	for (int i = 0; i < POP_SIZE; i++) {
 		pop->push_back(new ProtoEye());
@@ -85,6 +88,7 @@ int main(int argc, char const *argv[])
 			// pop->at(i_best)->display();
 			std::cout << pop->at(i_best)->to_tsv_line() <<std::endl;
 		}
+		outfile << pop->at(i_best)->to_tsv_line() << "\n";
 		for (unsigned int fi = 0; fi < pop->size(); fi++)
 		{
 			proba[fi] = fitness[fi] / sum;
@@ -133,6 +137,8 @@ int main(int argc, char const *argv[])
 		delete fitness;
 		delete proba;
 	}
+	outfile.close();
+
 	delete pop;
 	return 0;
 }	
