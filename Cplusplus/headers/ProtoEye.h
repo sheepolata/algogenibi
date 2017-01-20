@@ -2,6 +2,7 @@
 #define _PROTOEYE_H
 
 #include <map>
+#include <string>
 #include "Parameters.h"
 
 extern std::map<double, double>* dico;
@@ -11,7 +12,7 @@ class ProtoEye
 public:
 	ProtoEye();
 	~ProtoEye();
-	
+
 	bool isValid();
 
 	//Algorithm Functions
@@ -23,6 +24,10 @@ public:
 	bool isDead();
 
 	double v();
+
+	void display();
+
+	std::string to_tsv_line();
 
 	friend ProtoEye* breed(ProtoEye const &, ProtoEye const &);
 

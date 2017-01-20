@@ -30,6 +30,28 @@ void load_tsv(){
         std::cerr << "Impossible d'ouvrir le fichier !" << std::endl;
 }
 
+unsigned int max_index(double* tab, int size){
+	unsigned int i = 0;
+	double tmp = -1000000;
+	for (int j = 0; j < size; j++)
+	{
+		if(tab[j] > tmp){
+			i = j;
+			tmp = tab[j];
+		}
+	}
+	return i;
+}
+
+int get_parent_index(double* repartition){
+	double rnd = rand() / (double) RAND_MAX;
+	int cmp = 0;
+	while(rnd > repartition[cmp]){
+		cmp++;
+	}
+	return cmp;
+}
+
 int main(int argc, char const *argv[])
 {
 	/* initialize random seed: */
@@ -45,61 +67,72 @@ int main(int argc, char const *argv[])
 
 	for (int gen = 0; gen < NB_GEN; gen++)
 	{
-		printf("Generation %d\n", gen);
-		double* fitness = new double[POP_SIZE];
-		double sum = 0;
+		if(gen%(NB_GEN/10) == 0){
+			printf("---- Generation %d ----\n", gen);
+		}
+		double* fitness 	= new double[POP_SIZE];
+		double* proba 		= new double[POP_SIZE];
+		double* repartition = new double[POP_SIZE];
+		double sum 			= 0;
+		unsigned int 		i_best;
 		for (unsigned int fi = 0; fi < pop->size(); fi++)
 		{
 			fitness[fi] = pop->at(fi)->v() * 1000;
 			sum += fitness[fi];
 		}
-		
+		i_best = max_index(fitness, POP_SIZE);
+		if(gen%(NB_GEN/10) == 0){
+			// pop->at(i_best)->display();
+			std::cout << pop->at(i_best)->to_tsv_line() <<std::endl;
+		}
+		for (unsigned int fi = 0; fi < pop->size(); fi++)
+		{
+			proba[fi] = fitness[fi] / sum;
+		}
+		repartition[0] = proba[0];
+		for (unsigned int fi = 1; fi < pop->size(); fi++)
+		{
+			repartition[fi] = repartition[fi-1] + proba[fi];
+		}
 
 		std::vector<ProtoEye *>* new_pop = new std::vector<ProtoEye *>();
-		while(new_pop.size() < POP_SIZE){
+		while(new_pop->size() < POP_SIZE/*false*/){
 			//Pick parents
-			ProtoEye * p1;
-			ProtoEye * p2;
+			int pi1 = get_parent_index(repartition);
+			int pi2;
+			int timeout = 0;
+			do{
+				pi2 = get_parent_index(repartition);
+				timeout++;
+			}while(pi1 == pi2 && timeout < 10000);
+			ProtoEye * p1 = pop->at(pi1);
+			ProtoEye * p2 = pop->at(pi2);
+
 
 			//Breed
 			ProtoEye * child;
-			//child = breed(*p1, *p2);
+			child = breed(*p1, *p2);
 
+			// printf("n0 = %f\n", child->n0->getValue());
 			//Check if child OK
 			//If OK, add child to new pop
 			//Else, repeat from pick parent
+			if(!child->isDead()){
+				new_pop->push_back(child);
+			}
+			else{
+				delete child;
+			}
 		}
 
 		//Set pop = new_pop
+		delete pop;
+		pop = new_pop;
+
+		//Clean memory TODO
+		delete fitness;
+		delete proba;
 	}
-
-
-	// ProtoEye* pe = new ProtoEye();
-	// ProtoEye* pe2 = new ProtoEye();
-
-	// std::cout << "pe" << std::endl;
-	// std::cout << pe->p() << std::endl;
-	// std::cout << pe->a() << std::endl;
-	// std::cout << pe->r1() << std::endl;
-	// std::cout << pe->teta() << std::endl;
-	// std::cout << pe->isDead() << std::endl;
-
-	// std::cout << "pe2" << std::endl;
-	// std::cout << pe2->p() << std::endl;
-	// std::cout << pe2->a() << std::endl;
-	// std::cout << pe2->r1() << std::endl;
-	// std::cout << pe2->teta() << std::endl;
-	// std::cout << pe2->isDead() << std::endl;
-
-	// ProtoEye* c = breed(*pe, *pe2);
-
-	// std::cout << "c" << std::endl;
-	// std::cout << c->p() << std::endl;
-	// std::cout << c->a() << std::endl;
-	// std::cout << c->r1() << std::endl;
-	// std::cout << c->teta() << std::endl;
-	// std::cout << c->isDead() << std::endl;
-
-	// delete p;
+	delete pop;
 	return 0;
 }	

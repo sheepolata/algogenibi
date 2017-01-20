@@ -3,22 +3,23 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
 #include <math.h>
 
 const double W = 1.5;//cm, largeur max de l'oeil
 const double I = exp(6); //Intensite lumineuse
 
 const double CROSSOVER_RATE 	= 0.20;
-const double MUTATION_RATE 	= 0.01;
-const double MUTATION_CHANCE = 0.05; //5-25%
-const double PRECISION		= 0.0001;
-const int POP_SIZE			= 10;
-const int NB_GEN			= 10;
+const double MUTATION_RATE 		= 0.05;
+const double MUTATION_CHANCE 	= 0.25; //5-25%
+const double PRECISION			= 0.0001;
+const int POP_SIZE				= 300;
+const int NB_GEN				= 10000;
 
 class Parameters
 {
 public:
-	Parameters(double, double, double);
+	Parameters(double, double, double, std::string);
 	~Parameters();
 
 	double getValue();
@@ -43,6 +44,8 @@ private:
 	double value;
 	double min;
 	double max;
+
+	std::string label;
 };
 
 #endif

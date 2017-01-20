@@ -1,6 +1,9 @@
 #include "../headers/Parameters.h"
 
-Parameters::Parameters(double val, double mini, double maxi) : value(val), min(mini), max(maxi){
+#include <random>
+
+
+Parameters::Parameters(double val, double mini, double maxi, std::string l) : value(val), min(mini), max(maxi), label(l){
 
 }
 
@@ -28,11 +31,28 @@ bool Parameters::isValid(){
 void Parameters::mutate(){
 	double change;
 	double rnd;
-	rnd = rand() / (double)RAND_MAX;
-	change = (MUTATION_RATE/2.) - rnd * MUTATION_RATE;
-	this->value *= 1 + change;
+	if(this->value == 0){
+		std::random_device                  rand_dev;
+	    std::mt19937                        generator(rand_dev());
+	    std::uniform_int_distribution<int>  distr(0, 100);
+	    // rnd = (double)distr(generator) / 100;
+	    // change = rnd * PRECISION;
+	    change = this->max * MUTATION_RATE;
+	    this->value += change;
+	}
+	else{
+		rnd = rand() / (double)RAND_MAX;
+		change = (MUTATION_RATE/2.) - rnd * MUTATION_RATE;
+		// if(this->label == "n0"){
+		// 	printf("%f to ", this->value);
+		// }
+		this->value *= 1 + change;//+ MUTATION_RATE;
+		// if(this->label == "n0"){
+		// 	printf("%f\n", this->value);
+		// }
+	}
 }
 
 void Parameters::display(){
-	printf("%f < %f < %f\n", this->min, this->value, this->max);
+	printf("%s : %f < %f < %f\n",this->label.c_str(), this->min, this->value, this->max);
 }
