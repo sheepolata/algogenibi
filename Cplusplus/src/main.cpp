@@ -62,6 +62,9 @@ int main(int argc, char const *argv[])
 
 	std::ofstream outfile;
   	outfile.open ("best_per_gen.tsv");
+  	std::string entete = "";
+  	entete += "rho_c\ti\tphi_1\tn0\tp\ta\tr1\tteta";
+  	outfile << entete << "\n";
 
 	std::vector<ProtoEye *>* pop = new std::vector<ProtoEye *>();
 	for (int i = 0; i < POP_SIZE; i++) {
@@ -108,7 +111,7 @@ int main(int argc, char const *argv[])
 			do{
 				pi2 = get_parent_index(repartition);
 				timeout++;
-			}while(pi1 == pi2 && timeout < 10000);
+			}while(pi1 == pi2 && timeout < 5000);
 			ProtoEye * p1 = pop->at(pi1);
 			ProtoEye * p2 = pop->at(pi2);
 
@@ -116,7 +119,12 @@ int main(int argc, char const *argv[])
 			//Breed
 			ProtoEye * child;
 			child = breed(*p1, *p2);
-
+			// if(gen%1500 == 0){
+			// 	printf("child phi1 = %f\n", child->phi_1->getValue());
+			// 	printf("child rho_c = %f\n", child->rho_c->getValue());
+			// 	printf("child i = %f\n", child->i->getValue());
+			// 	printf("child n0 = %f\n\n", child->n0->getValue());
+			// }
 			// printf("n0 = %f\n", child->n0->getValue());
 			//Check if child OK
 			//If OK, add child to new pop

@@ -2,7 +2,6 @@
 
 #include <random>
 
-
 Parameters::Parameters(double val, double mini, double maxi, std::string l) : value(val), min(mini), max(maxi), label(l){
 
 }
@@ -32,25 +31,20 @@ void Parameters::mutate(){
 	double change;
 	double rnd;
 	if(this->value == 0){
-		std::random_device                  rand_dev;
-	    std::mt19937                        generator(rand_dev());
-	    std::uniform_int_distribution<int>  distr(0, 100);
-	    // rnd = (double)distr(generator) / 100;
-	    // change = rnd * PRECISION;
 	    change = this->max * MUTATION_RATE;
 	    this->value += change;
+		// if(this->label == "phi_1"){
+		// 	printf("mutate : %f\n", this->value);
+		// }
 	}
 	else{
 		rnd = rand() / (double)RAND_MAX;
 		change = (MUTATION_RATE/2.) - rnd * MUTATION_RATE;
-		// if(this->label == "n0"){
-		// 	printf("%f to ", this->value);
-		// }
 		this->value *= 1 + change;//+ MUTATION_RATE;
-		// if(this->label == "n0"){
-		// 	printf("%f\n", this->value);
-		// }
 	}
+	// if(this->label == "phi_1"){
+	// 	printf("phi_1 value = %f\n", this->value);
+	// }
 }
 
 void Parameters::display(){

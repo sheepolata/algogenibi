@@ -11,10 +11,10 @@ const double I = exp(6); //Intensite lumineuse
 
 const double CROSSOVER_RATE 	= 0.20;
 const double MUTATION_RATE 		= 0.05;
-const double MUTATION_CHANCE 	= 0.25; //5-25%
+const double MUTATION_CHANCE 	= 0.20; //5-25%
 const double PRECISION			= 0.0001;
 const int POP_SIZE				= 300;//300
-const int NB_GEN				= 10000;//10000
+const int NB_GEN				= 20000;//10000
 
 class Parameters
 {
