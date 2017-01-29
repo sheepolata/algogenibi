@@ -5,6 +5,10 @@
 #include <string.h>
 #include <vector>
 
+#include <iomanip>
+#include <ctime>
+#include <chrono>
+
 #include "../headers/Parameters.h"
 #include "../headers/ProtoEye.h"
 
@@ -52,6 +56,15 @@ int get_parent_index(double* repartition){
 	return cmp;
 }
 
+std::string CurrentDate()
+{
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+    char buf[100] = {0};
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", std::localtime(&now));
+    return buf;
+}
+
 int main(int argc, char const *argv[])
 {
 	/* initialize random seed: */
@@ -60,8 +73,11 @@ int main(int argc, char const *argv[])
 
 	load_tsv();
 
+    // std::string time = get_date_string(std::system_clock::now());
+    std::string time = CurrentDate();
+
 	std::ofstream outfile;
-  	outfile.open ("best_per_gen.tsv");
+  	outfile.open ("./results/"+time+"_results.tsv");
   	std::string entete = "";
   	entete += "rho_c\ti\tphi_1\tn0\tp\ta\tr1\tteta";
   	outfile << entete << "\n";
