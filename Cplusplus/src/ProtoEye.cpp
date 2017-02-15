@@ -46,10 +46,7 @@ double ProtoEye::a(){
 }
 
 double ProtoEye::r1(){
-	// printf("brefore %f -> ", this->n0->getValue());
 	double v = roundf(this->n0->getValue() * 1000) / 1000;
-	// printf("after %f\n", this->n0->getValue());
-	// printf("dico->at(%f)\n", v);
 	return dico->at(v);
 }
 
@@ -68,40 +65,27 @@ double ProtoEye::teta(){
 
 bool ProtoEye::isDead(){
 	if(!this->isValid()){
-		// printf("%s\n", "Not all param are valid");
 		return true;
 	}
-	//TODO REGLER PROBLEME PHI_1 
-	// bool d1 = this->phi_1->getValue() != 0 && this->rho_c->getValue() != (W/2);
 	bool d1 = !apeutpresegal(this->phi_1->getValue(), 0, PRECISION) && !apeutpresegal(this->rho_c->getValue(), (W/2), PRECISION);
-	// bool d2 = this->phi_1->getValue() != 0 && this->i->getValue() > (W * (cos(this->phi_1->getValue()) / 2));
 	bool d2 = !apeutpresegal(this->phi_1->getValue(), 0, PRECISION) && this->i->getValue() > (W * (cos(this->phi_1->getValue()) / 2));
 	bool d3 = this->n0->getValue() != 1.35 && (this->p() > (this->r1() * this->a() / 2) || this->p() < this->a()/2 );
-	// bool d3 = !apeutpresegal(this->n0->getValue(), 1.35, PRECISION) && (this->p() > (this->r1() * this->a() / 2) || this->p() < this->a()/2 );
 	double tmp = sqrt(exp(1) / (0.746 * sqrt(I)));
 	bool d4 = this->n0->getValue() == 1.35 && this->phi_1->getValue() == 0 && this->i->getValue() > 0.5*(W - tmp);
 	bool d5 = this->n0->getValue() == 1.35 && this->phi_1->getValue() != 0 && this->i->getValue() > 0.5*(W*cos(this->phi_1->getValue()) - tmp);
 	if(d1){
-		// if(phi_1->getValue() != 0)
-		// 	printf("OMG d1\n");
 		return true;
 	}
 	if(d2){
-		// if(phi_1->getValue() != 0)
-		// 	printf("OMG d2\n");
 		return true;
 	}
 	if(d3){
-		// if(phi_1->getValue() != 0)
-		// 	printf("OMG d3\n");
 		return true;
 	}
 	if(d4){
-		// printf("OMG d3\n");
 		return true;
 	}
 	if(d5){
-		// printf("OMG d3\n");
 		return true;
 	}
 
@@ -173,9 +157,7 @@ ProtoEye* breed(ProtoEye const & p1, ProtoEye const & p2){
 	}
 	rnd = rand() % 100;//0-99
 	if(apeutpresegal(child->rho_c->getValue(), W/2, PRECISION) && rnd < cmp){
-		// printf("Phi 1 mutate\n");
 		child->phi_1->mutate();
-		// printf("new val = %f\n", child->phi_1->getValue());
 	}
 	rnd = rand() % 100;//0-99
 	if(rnd < cmp){
@@ -215,6 +197,8 @@ std::string ProtoEye::to_tsv_line(){
 	res += std::to_string(this->r1());
 	res += "\t";
 	res += std::to_string(this->teta());
+	res += "\t";
+	res += std::to_string(this->v());
 	return res;
 }
 

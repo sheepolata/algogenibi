@@ -14,7 +14,7 @@ const double MUTATION_RATE		= 0.02; // 0.05 beaucoup trop
 const double MUTATION_CHANCE	= 0.20; //5-25%
 const double PRECISION			= 0.0001;
 const int POP_SIZE				= 300;//300
-const int NB_GEN				= 25000;//->27500
+const int NB_GEN				= 25000;//->25000
 
 class Parameters
 {

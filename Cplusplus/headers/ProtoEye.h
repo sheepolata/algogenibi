@@ -31,10 +31,10 @@ public:
 
 	friend ProtoEye* breed(ProtoEye const &, ProtoEye const &);
 
-private:
 	Parameters* phi_1;
 	Parameters* rho_c;
 	Parameters* i;
 	Parameters* n0;
+// private:
 };
 #endif

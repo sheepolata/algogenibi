@@ -9,6 +9,8 @@
 #include <ctime>
 #include <chrono>
 
+#include <climits>
+
 #include "../headers/Parameters.h"
 #include "../headers/ProtoEye.h"
 
@@ -47,6 +49,19 @@ unsigned int max_index(double* tab, int size){
 	return i;
 }
 
+unsigned int min_index(double* tab, int size){
+	unsigned int i = 0;
+	double tmp = UINT_MAX;
+	for (int j = 0; j < size; j++)
+	{
+		if(tab[j] < tmp){
+			i = j;
+			tmp = tab[j];
+		}
+	}
+	return i;
+}
+
 int get_parent_index(double* repartition){
 	double rnd = rand() / (double) RAND_MAX;
 	int cmp = 0;
@@ -74,15 +89,19 @@ int main(int argc, char const *argv[])
 	printf("seed = %ld\n", time(NULL));
 
 	load_tsv();
-
-    // std::string time = get_date_string(std::system_clock::now());
     std::string time = CurrentDate();
 
-	std::ofstream outfile;
-  	outfile.open ("./results/"+time+"_results.tsv");
+	std::ofstream best_outfile;
+	std::ofstream avg_outfile;
+	std::ofstream worst_outfile;
+  	best_outfile.open ("./results/"+time+"_best_results.tsv");
+  	avg_outfile.open ("./results/"+time+"_avg_results.tsv");
+  	worst_outfile.open ("./results/"+time+"_worst_results.tsv");
   	std::string entete = "";
-  	entete += "rho_c\ti\tphi_1\tn0\tp\ta\tr1\tteta";
-  	outfile << entete << "\n";
+  	entete += "rho_c\ti\tphi_1\tn0\tp\ta\tr1\tteta\tv";
+  	best_outfile << entete << "\n";
+  	avg_outfile << entete << "\n";
+  	worst_outfile << entete << "\n";
 
 	std::vector<ProtoEye *>* pop = new std::vector<ProtoEye *>();
 	for (int i = 0; i < POP_SIZE; i++) {
@@ -99,17 +118,85 @@ int main(int argc, char const *argv[])
 		double* repartition = new double[POP_SIZE];
 		double sum 			= 0;
 		unsigned int 		i_best;
+		unsigned int 		i_worst;
 		for (unsigned int fi = 0; fi < pop->size(); fi++)
 		{
 			fitness[fi] = pop->at(fi)->v() * 1000;
 			sum += fitness[fi];
 		}
+
+		//Get the worst individual
+		i_worst = min_index(fitness, POP_SIZE);
+		if(gen%(NB_GEN/10) == 0){
+			std::cout << "Worst : " << pop->at(i_worst)->to_tsv_line() <<std::endl;
+		}
+		worst_outfile << pop->at(i_worst)->to_tsv_line() << "\n";
+
+		//Get the best individual
 		i_best = max_index(fitness, POP_SIZE);
 		if(gen%(NB_GEN/10) == 0){
-			// pop->at(i_best)->display();
-			std::cout << pop->at(i_best)->to_tsv_line() <<std::endl;
+			std::cout << "Best  : " << pop->at(i_best)->to_tsv_line() <<std::endl;
 		}
-		outfile << pop->at(i_best)->to_tsv_line() << "\n";
+		best_outfile << pop->at(i_best)->to_tsv_line() << "\n";
+
+		//Compute the averages and save them
+		float roh_c_avg = 0.;
+		float i_avg = 0.;
+		float phi_1_avg = 0.;
+		float n0_avg = 0.;
+		float p_avg = 0.;
+		float a_avg = 0.;
+		float r1_avg = 0.;
+		float teta_avg = 0.;
+		float v_avg = 0.;
+		int total = 0;
+		for (unsigned int it = 0; it < pop->size(); it++){
+			total++;
+			roh_c_avg += pop->at(it)->rho_c->getValue();
+			i_avg += pop->at(it)->i->getValue();
+			phi_1_avg += pop->at(it)->phi_1->getValue();
+			n0_avg += pop->at(it)->n0->getValue();
+
+			p_avg += pop->at(it)->p();
+			a_avg += pop->at(it)->a();
+			r1_avg += pop->at(it)->r1();
+			teta_avg += pop->at(it)->teta();
+
+			v_avg += pop->at(it)->v();
+		}
+		roh_c_avg /= total;
+		i_avg /= total;
+		phi_1_avg /= total;
+		n0_avg /= total;
+		p_avg /= total;
+		a_avg /= total;
+		r1_avg /= total;
+		teta_avg /= total;
+		v_avg /= total;
+
+		std::string to_print = "";
+		to_print += std::to_string(roh_c_avg);
+		to_print += "\t";
+		to_print += std::to_string(i_avg);
+		to_print += "\t";
+		to_print += std::to_string(phi_1_avg);
+		to_print += "\t";
+		to_print += std::to_string(n0_avg);
+		to_print += "\t";
+		to_print += std::to_string(p_avg);
+		to_print += "\t";
+		to_print += std::to_string(a_avg);
+		to_print += "\t";
+		to_print += std::to_string(r1_avg);
+		to_print += "\t";
+		to_print += std::to_string(teta_avg);
+		to_print += "\t";
+		to_print += std::to_string(v_avg);
+
+		avg_outfile << to_print << "\n";
+
+
+		//Compute the weighted probability
 		for (unsigned int fi = 0; fi < pop->size(); fi++)
 		{
 			proba[fi] = fitness[fi] / sum;
@@ -133,17 +220,9 @@ int main(int argc, char const *argv[])
 			ProtoEye * p1 = pop->at(pi1);
 			ProtoEye * p2 = pop->at(pi2);
 
-
 			//Breed
 			ProtoEye * child;
 			child = breed(*p1, *p2);
-			// if(gen%1500 == 0){
-			// 	printf("child phi1 = %f\n", child->phi_1->getValue());
-			// 	printf("child rho_c = %f\n", child->rho_c->getValue());
-			// 	printf("child i = %f\n", child->i->getValue());
-			// 	printf("child n0 = %f\n\n", child->n0->getValue());
-			// }
-			// printf("n0 = %f\n", child->n0->getValue());
 			//Check if child OK
 			//If OK, add child to new pop
 			//Else, repeat from pick parent
@@ -163,7 +242,9 @@ int main(int argc, char const *argv[])
 		delete fitness;
 		delete proba;
 	}
-	outfile.close();
+	best_outfile.close();
+	avg_outfile.close();
+	worst_outfile.close();
 
 	delete pop;
 	return 0;
