@@ -10,11 +10,11 @@ const double W = 1.5;//cm, largeur max de l'oeil
 const double I = exp(6); //Intensite lumineuse
 
 const double CROSSOVER_RATE		= 0.20;
-const double MUTATION_RATE		= 0.05;
+const double MUTATION_RATE		= 0.02; // 0.05 beaucoup trop
 const double MUTATION_CHANCE	= 0.20; //5-25%
 const double PRECISION			= 0.0001;
 const int POP_SIZE				= 300;//300
-const int NB_GEN				= 27500;//->27500
+const int NB_GEN				= 25000;//->27500
 
 class Parameters
 {

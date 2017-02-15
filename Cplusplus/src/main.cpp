@@ -68,7 +68,7 @@ std::string CurrentDate()
 int main(int argc, char const *argv[])
 {
 	/* initialize random seed: */
-	//Seed that works : 1487181683
+	//Seed that works : 1487181683, 1487182707
 	// srand(time(NULL));
 	srand(time(NULL));
 	printf("seed = %ld\n", time(NULL));
