@@ -4,10 +4,6 @@
 #include <stdio.h>
 #include <iostream>
 
-bool apeutpresegal(double d, double d2, double prec){
-	return abs(d-d2) < prec;
-}
-
 std::map<double, double>* dico = new std::map<double, double>();
 
 ProtoEye::ProtoEye(){
@@ -78,11 +74,11 @@ bool ProtoEye::isDead(){
 	//TODO REGLER PROBLEME PHI_1 
 	// bool d1 = this->phi_1->getValue() != 0 && this->rho_c->getValue() != (W/2);
 	bool d1 = !apeutpresegal(this->phi_1->getValue(), 0, PRECISION) && !apeutpresegal(this->rho_c->getValue(), (W/2), PRECISION);
-	bool d2 = this->phi_1->getValue() != 0 && this->i->getValue() > (W * (cos(this->phi_1->getValue()) / 2));
-	// bool d2 = !apeutpresegal(this->phi_1->getValue(), 0, PRECISION) && this->i->getValue() > (W * (cos(this->phi_1->getValue()) / 2));
+	// bool d2 = this->phi_1->getValue() != 0 && this->i->getValue() > (W * (cos(this->phi_1->getValue()) / 2));
+	bool d2 = !apeutpresegal(this->phi_1->getValue(), 0, PRECISION) && this->i->getValue() > (W * (cos(this->phi_1->getValue()) / 2));
 	bool d3 = this->n0->getValue() != 1.35 && (this->p() > (this->r1() * this->a() / 2) || this->p() < this->a()/2 );
 	// bool d3 = !apeutpresegal(this->n0->getValue(), 1.35, PRECISION) && (this->p() > (this->r1() * this->a() / 2) || this->p() < this->a()/2 );
-	double tmp = sqrt(exp(1) / (0.746 * sqrt(this->i->getValue())));
+	double tmp = sqrt(exp(1) / (0.746 * sqrt(I)));
 	bool d4 = this->n0->getValue() == 1.35 && this->phi_1->getValue() == 0 && this->i->getValue() > 0.5*(W - tmp);
 	bool d5 = this->n0->getValue() == 1.35 && this->phi_1->getValue() != 0 && this->i->getValue() > 0.5*(W*cos(this->phi_1->getValue()) - tmp);
 	if(d1){
@@ -100,14 +96,14 @@ bool ProtoEye::isDead(){
 		// 	printf("OMG d3\n");
 		return true;
 	}
-	// if(d4){
-	// 	// printf("OMG d3\n");
-	// 	return true;
-	// }
-	// if(d5){
-	// 	// printf("OMG d3\n");
-	// 	return true;
-	// }
+	if(d4){
+		// printf("OMG d3\n");
+		return true;
+	}
+	if(d5){
+		// printf("OMG d3\n");
+		return true;
+	}
 
 	return false;
 }
