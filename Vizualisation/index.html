@@ -6,24 +6,29 @@
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://d3js.org/d3-queue.v3.min.js"></script>
     <script src="eye.js"></script>
+    <script src="plot.js"></script>
 </head>
 <body>
 <div>
-    <!-- <input id="slider" type="range" value="1" min="1" max="10" step="1" /> -->
+    <button id="play_button" type="button" style="width:50px">Pause</button>
+    <input id="generation_slider" type="range" value="0" min="0" max="1" step="1" style="width:300px"/> <br>
     <span id="generation_counter">NA</span>
 </div>
 
 <script>
 
-    var margin = {top: 50, right: 20, bottom: 50, left: 20},
+    var margin = {top: 50, right: 30, bottom: 20, left: 30},
         width = 350 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom;
 
-    var generation_count = 0;
+    var play = true;
+
+    d3.select('#generation_slider').attr("value", 0);
 
     // Asynchronously load the data
     d3.queue()
-        .defer(d3.tsv, "best_per_gen.tsv")
+    .defer(d3.tsv, "best_per_gen.tsv")
+        //.defer(d3.tsv, "../data/best_results.tsv")
         .await(processData);
 
     function processData(error, data) {
@@ -37,20 +42,61 @@
             // TODO : parse other dimensions for plot
 
         });
+
+        d3.select('#generation_slider').attr("max", data.length);
+
+        var slider_value = function () {
+            return +document.getElementById("generation_slider").value;
+        };
+
+        var set_generation_count = function (value) {
+            d3.select('#generation_slider').attr("value", value);
+            document.getElementById("generation_slider").value = value;
+        };
+
+
         initEye();
-        drawEye(data[generation_count]);
+        d3.select('#generation_counter').html(slider_value());
+        drawEye(data[slider_value()]);
+        drawPlot(data);
 
-        d3.interval(function() {
-            //console.log(generation_count);
-            d3.select('#generation_counter').html(generation_count);
-            generation_count += 1;
-            updateEye(data[generation_count]);
-
-            if (generation_count >= data.length) {
-                generation_count = 0;
+        function update_view() {
+            return function () {
+                //console.log(generation_count);
+                set_generation_count(slider_value() + 1);
+                if (slider_value() >= data.length) {
+                    set_generation_count(0);
+                }
+                d3.select('#generation_counter').html(slider_value());
+                updateEye(data[slider_value()]);
             }
 
-        }, 30);
+        }
+
+
+        var interval = d3.interval(update_view(), 30);
+
+        d3.select("#generation_slider").on("input", function () {
+            d3.select('#generation_counter').html(slider_value());
+            interval.stop();
+            d3.select("#play_button").html("Play");
+            play = false;
+            updateEye(data[+this.value])
+
+        });
+
+        d3.select("#play_button").on("click", function () {
+            if (play) {
+             interval.stop();
+             this.innerHTML = "Play";
+             play = false;
+             } else {
+             interval.restart(update_view(), 30);
+             this.innerHTML = "Pause";
+             play = true;
+             }
+        });
+
 
     }
 

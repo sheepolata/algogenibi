@@ -8,9 +8,7 @@ var w = _w * metric_scale;
 
 var svg;
 var g;
-
-var t = d3.transition()
-    .duration(2);
+var epsilon = 0.002;
 
 var initEye = function () {
     // Set graphic elements
@@ -52,7 +50,7 @@ var initEye = function () {
 };
 
 var computePoint = function (data) {
-    points = {};
+    var points = {};
 
     var _a = data.a; // in cm
     var _i = data.i; // in cm
@@ -85,25 +83,12 @@ var computePoint = function (data) {
 
     var semi_depth = 0;
 
-    // TODO : comparison between rho_c and w/2 with epsilon
-    if (rho_c > w/2) {
-        var phi_0 = Math.acos( (w/2) / rho_c);
-        var semi_depth = Math.sqrt( rho_c * rho_c - (w/2) * (w/2) );
-
-        y_A = semi_depth;
-        y_A = 0;
-        y_E = y_A;
-        y_F = y_A;
-
-        points.phi_0 = phi_0;
-
-    }
-    else if (rho_c == w/2) {
+    if (Math.abs(rho_c - w/2) < epsilon) {
         y_A = 0;
         var x_C = -1 * Math.cos(phi_1) * rho_c;
         var y_C = -1 * Math.sin(phi_1) * rho_c;
 
-        var x_D = 1 * Math.cos(phi_1) * rho_c;
+        var x_D = Math.cos(phi_1) * rho_c;
         var y_D = y_C;
 
         y_E = y_C;
@@ -114,7 +99,18 @@ var computePoint = function (data) {
         points.x_D = x_D;
         points.y_D = y_D;
 
+    } else if (rho_c > w/2) {
+        var phi_0 = Math.acos( (w/2) / rho_c);
+        semi_depth = Math.sqrt( rho_c * rho_c - (w/2) * (w/2) );
+
+        y_A = 0;
+        y_E = y_A;
+        y_F = y_A;
+
+        points.phi_0 = phi_0;
+
     }
+
     points.semi_depth = semi_depth;
 
     y_B = y_A;
@@ -135,40 +131,34 @@ var computePoint = function (data) {
 
     return points;
 
-}
+};
 
 var cavity = function (points) {
-    var arc = d3.arc()
+    return d3.arc()
         .innerRadius(points.rho_c - 1)
         .outerRadius(points.rho_c + 1)
         .startAngle(function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return Math.PI / 2 - points.phi_1;
+            } else if (points.rho_c > w/2) {
                 return Math.PI / 2 + points.phi_0;
             }
-            else if (points.rho_c == w/2) {
-                return Math.PI / 2 - points.phi_1;
-            }
-            //alert("rho_c < w/2");
-            console.log("rho_c : " + data.rho_c + " < w/2");
         })
         .endAngle(function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return 3 * Math.PI / 2 + points.phi_1;
+            } else if (points.rho_c > w/2) {
                 return 3 * Math.PI / 2 - points.phi_0;
             }
-            else if (points.rho_c == w/2) {
-                return 3 * Math.PI / 2 + points.phi_1;
-            }
         });
-
-    return arc;
-}
+};
 
 // draw the eye representation
 var drawEye = function (data) {
     //rho_c	    i	        phi_1	    n0	        p	        a	        r1	        teta
-    console.log(data);
+    //console.log(data);
 
-    points = computePoint(data);
+    var points = computePoint(data);
 
     // point of view
     g.append("circle")
@@ -179,25 +169,24 @@ var drawEye = function (data) {
         .style("fill", "red")
         .attr("transform", "translate("+(w/2)+","+(w/2 - points.semi_depth)+")");
 
-
     // left iris part
     g.append("line")
         .attr("id", "left_iris")
         .attr("x1", function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.x_C;
+            } else if (points.rho_c > w/2) {
                 return points.x_A;
             }
-            else if (points.rho_c == w/2) {
-                return points.x_C;
-            }
+
         })
         .attr("y1", function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.y_C;
+            } else if (points.rho_c > w/2) {
                 return points.y_A;
             }
-            else if (points.rho_c == w/2) {
-                return points.x_C;
-            }
+
         })
         .attr("x2", points.x_E)
         .attr("y2", points.y_E)
@@ -209,20 +198,20 @@ var drawEye = function (data) {
     g.append("line")
         .attr("id", "right_iris")
         .attr("x1", function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.x_D;
+            } else if (points.rho_c > w/2) {
                 return points.x_B;
             }
-            else if (points.rho_c == w/2) {
-                return points.x_D;
-            }
+
         })
         .attr("y1", function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.y_D;
+            } else if (points.rho_c > w/2) {
                 return points.y_B;
             }
-            else if (points.rho_c == w/2) {
-                return points.y_D;
-            }
+
         })
         .attr("x2", points.x_F)
         .attr("y2", points.y_F)
@@ -245,16 +234,40 @@ var drawEye = function (data) {
     // To smooth the edge
     g.append("circle")
         .attr("id", "left_edge")
-        .attr("cx", points.x_A)
-        .attr("cy", points.y_A)
+        .attr("cx", function () {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.x_C;
+            } else if (points.rho_c > w/2) {
+                return points.x_A;
+            }
+        })
+        .attr("cy", function () {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.y_C;
+            } else if (points.rho_c > w/2) {
+                return points.y_A;
+            }
+        })
         .attr("r", 1)
         .style("fill", "black")
         .attr("transform", "translate("+(w/2)+","+(w/2)+")");
 
     g.append("circle")
         .attr("id", "right_edge")
-        .attr("cx", points.x_B)
-        .attr("cy", points.y_B)
+        .attr("cx", function () {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.x_D;
+            } else if (points.rho_c > w/2) {
+                return points.x_B;
+            }
+        })
+        .attr("cy", function () {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.y_D;
+            } else if (points.rho_c > w/2) {
+                return points.y_B;
+            }
+        })
         .attr("r", 1)
         .style("fill", "black")
         .attr("transform", "translate("+(w/2)+","+(w/2)+")");
@@ -269,56 +282,81 @@ var updateEye = function (data) {
 
     d3.select("#left_iris")
         .attr("x1", function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.x_C;
+            } else if (points.rho_c > w/2) {
                 return points.x_A;
             }
-            else if (points.rho_c == w/2) {
-                return points.x_C;
-            }
+
         })
         .attr("y1", function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.y_C;
+            } else if (points.rho_c > w/2) {
                 return points.y_A;
             }
-            else if (points.rho_c == w/2) {
-                return points.x_C;
-            }
+
         })
         .attr("x2", points.x_E)
         .attr("y2", points.y_E);
 
+
     d3.select("#right_iris")
         .attr("x1", function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.x_D;
+            } else if (points.rho_c > w/2) {
                 return points.x_B;
             }
-            else if (points.rho_c == w/2) {
-                return points.x_D;
-            }
+
         })
         .attr("y1", function () {
-            if (points.rho_c > w/2) {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.y_D;
+            } else if (points.rho_c > w/2) {
                 return points.y_B;
             }
-            else if (points.rho_c == w/2) {
-                return points.y_D;
-            }
+
         })
         .attr("x2", points.x_F)
         .attr("y2", points.y_F);
 
     d3.select("#left_edge")
-        .attr("cx", points.x_A)
-        .attr("cy", points.y_A);
+        .attr("cx", function () {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.x_C;
+            } else if (points.rho_c > w/2) {
+                return points.x_A;
+            }
+        })
+        .attr("cy", function () {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.y_C;
+            } else if (points.rho_c > w/2) {
+                return points.y_A;
+            }
+        });
 
     d3.select("#right_edge")
-        .attr("cx", points.x_B)
-        .attr("cy", points.y_B);
+        .attr("cx", function () {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.x_D;
+            } else if (points.rho_c > w/2) {
+                return points.x_B;
+            }
+        })
+        .attr("cy", function () {
+            if (Math.abs(points.rho_c - w/2) < epsilon) {
+                return points.y_D;
+            } else if (points.rho_c > w/2) {
+                return points.y_B;
+            }
+        });
 
     var arc = cavity(points);
 
-    g.select("#cavity")
+    d3.select("#cavity")
         .attr("d", arc)
         .attr("transform", "translate("+(w/2)+","+(w/2 - points.semi_depth)+")");
 
-}
+};
