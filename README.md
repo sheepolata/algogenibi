@@ -11,3 +11,4 @@ Les résultats des runs de l'algorithme sont enregistrés dans trois fichiers :
 * timestamp_worst_results.tsv : enregistrement des paramètres et fonction (`rho_c`, `i`, `phi_1`, `n0`, `p()`, `a()`, `r1()`, `teta()` et `v()`) du **pire individu** pour chaque génération.
 
 Ces trois fichiers sont présent dans un dossier *results* à la racine du projet C++.
+_**Attention**_, si ce dossier _**n'existe pas**_ lors du lancement du programme, l'enregistrement ne fonctionnera probablement pas. Il faut alors simplement créer un dossier vide nomer *results* à la racine du projet C++.
