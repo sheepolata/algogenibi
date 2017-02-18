@@ -9,10 +9,12 @@ var y;
 var p;
 var i;
 
+var x_extension = 300;
+
 var drawPlot = function (data) {
 
     svg = d3.select("body").append("svg")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.left + margin.right + x_extension)
         .attr("height", height + margin.top + margin.bottom);
 
 
@@ -20,9 +22,9 @@ var drawPlot = function (data) {
         .attr("transform", "translate(" + ((width + margin.left + margin.right) / 2 - w / 2) + "," + ((height + margin.top + margin.bottom) / 2 - w / 2) + ")");
 
     x = d3.scaleLinear()
-        .range([margin.left, width + margin.left]);
+        .range([margin.left, width + margin.left + x_extension]);
     y = d3.scaleLinear()
-        .range([height + margin.top, margin.top]);
+        .range([height + margin.top, 1]);
 
     /*rho_c  = d3.line()
      .x(function(d, i) { return x(i); })
@@ -115,7 +117,7 @@ var drawPlot = function (data) {
         .data(data)
         .attr("id", "p")
         .attr("class", "p")
-        .attr("d", p(data).slice(0, 1))
+        .attr("d", "")
         .style("stroke", "red")
         .attr("stroke-width", 1)
         .attr("shape-rendering", "geometricPrecision")
@@ -125,7 +127,7 @@ var drawPlot = function (data) {
         .data(data)
         .attr("id", "i")
         .attr("class", "i")
-        .attr("d", i(data).slice(0, 1))
+        .attr("d", "")
         .style("stroke", "green")
         .attr("stroke-width", 1)
         .attr("shape-rendering", "geometricPrecision")

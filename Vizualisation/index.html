@@ -17,7 +17,7 @@
 
 <script>
 
-    var margin = {top: 50, right: 30, bottom: 20, left: 30},
+    var margin = {top: 10, right: 30, bottom: 13, left: 30},
         width = 350 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom;
 
@@ -63,7 +63,7 @@
             return function () {
                 //console.log(generation_count);
                 set_generation_count(slider_value() + 1);
-                if (slider_value() >= data.length) {
+                if (slider_value() >= data.length - 1) {
                     set_generation_count(0);
                 }
                 d3.select('#generation_counter').html(slider_value());
