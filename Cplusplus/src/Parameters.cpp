@@ -41,7 +41,9 @@ void Parameters::mutate(){
 	else{
 		rnd = rand() / (double)RAND_MAX;
 		change = (MUTATION_RATE/2.) - rnd * MUTATION_RATE;
-		// this->value += (this->max * change);
+		// if(this->label == "i"){
+		// 	change /= 2.;
+		// }
 		this->value *= 1 + change;
 	}
 }

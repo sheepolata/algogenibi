@@ -121,7 +121,7 @@ int main(int argc, char const *argv[])
 		unsigned int 		i_worst;
 		for (unsigned int fi = 0; fi < pop->size(); fi++)
 		{
-			fitness[fi] = pop->at(fi)->v() * 1000; //TODO remove artificial increase, probably useless (to test)
+			fitness[fi] = pop->at(fi)->v();
 			sum += fitness[fi];
 		}
 
