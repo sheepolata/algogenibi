@@ -17,14 +17,14 @@ var initEye = function () {
         .attr("height", height + margin.top + margin.bottom);
 
     g = svg.append("g")
-        .attr("transform", "translate(" + ((width + margin.left + margin.right)/2 - w/2) + "," + ((height + margin.top + margin.bottom)/2 - w/2) + ")");
+        .attr("transform", "translate(" + ((width + margin.left + margin.right) / 2 - w / 2) + "," + ((height + margin.top + margin.bottom) / 2 - w / 2) + ")");
 
     // Trace reference axis
     var vertical = svg.append("line")
         .attr("id", "vertical_axis")
-        .attr("x1", (width + margin.left + margin.right)/2)
+        .attr("x1", (width + margin.left + margin.right) / 2)
         .attr("y1", 0)
-        .attr("x2", (width + margin.left + margin.right)/2)
+        .attr("x2", (width + margin.left + margin.right) / 2)
         .attr("y2", height + margin.top + margin.bottom)
         .style("stroke-dasharray", ("3, 3"))
         .style("stroke", "black");
@@ -32,21 +32,21 @@ var initEye = function () {
     var horizontal = svg.append("line")
         .attr("id", "horizontal_axis")
         .attr("x1", 0)
-        .attr("y1", (height + margin.top + margin.bottom)/2)
+        .attr("y1", (height + margin.top + margin.bottom) / 2)
         .attr("x2", width + margin.left + margin.right)
-        .attr("y2", (height + margin.top + margin.bottom)/2)
+        .attr("y2", (height + margin.top + margin.bottom) / 2)
         .style("stroke-dasharray", ("3, 3"))
         .style("stroke", "black");
 
 
     // center point
-    var origin = g.append("circle")
-        .attr("id", "origin")
-        .attr("cx", 0)
-        .attr("cy", 0)
-        .attr("r", 3)
-        .style("fill", "blue")
-        .attr("transform", "translate("+(w/2)+","+(w/2)+")");
+    /*var origin = g.append("circle")
+     .attr("id", "origin")
+     .attr("cx", 0)
+     .attr("cy", 0)
+     .attr("r", 3)
+     .style("fill", "blue")
+     .attr("transform", "translate("+(w/2)+","+(w/2)+")");*/
 };
 
 var computePoint = function (data) {
@@ -67,23 +67,22 @@ var computePoint = function (data) {
     var phi_1 = _phi_1;
 
 
-
-    var x_A = - w/2;
+    var x_A = -w / 2;
     var y_A;
 
-    var x_B = w/2;
+    var x_B = w / 2;
     var y_B;
 
 
-    var x_E = - a/2;
+    var x_E = -a / 2;
     var y_E;
 
-    var x_F = a/2;
+    var x_F = a / 2;
     var y_F;
 
     var semi_depth = 0;
 
-    if (Math.abs(rho_c - w/2) < epsilon) {
+    if (Math.abs(rho_c - w / 2) < epsilon) {
         y_A = 0;
         var x_C = -1 * Math.cos(phi_1) * rho_c;
         var y_C = -1 * Math.sin(phi_1) * rho_c;
@@ -99,9 +98,9 @@ var computePoint = function (data) {
         points.x_D = x_D;
         points.y_D = y_D;
 
-    } else if (rho_c > w/2) {
-        var phi_0 = Math.acos( (w/2) / rho_c);
-        semi_depth = Math.sqrt( rho_c * rho_c - (w/2) * (w/2) );
+    } else if (rho_c > w / 2) {
+        var phi_0 = Math.acos((w / 2) / rho_c);
+        semi_depth = Math.sqrt(rho_c * rho_c - (w / 2) * (w / 2));
 
         y_A = 0;
         y_E = y_A;
@@ -138,16 +137,16 @@ var cavity = function (points) {
         .innerRadius(points.rho_c - 1)
         .outerRadius(points.rho_c + 1)
         .startAngle(function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return Math.PI / 2 - points.phi_1;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return Math.PI / 2 + points.phi_0;
             }
         })
         .endAngle(function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return 3 * Math.PI / 2 + points.phi_1;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return 3 * Math.PI / 2 - points.phi_0;
             }
         });
@@ -167,23 +166,23 @@ var drawEye = function (data) {
         .attr("cy", 0)
         .attr("r", 3)
         .style("fill", "red")
-        .attr("transform", "translate("+(w/2)+","+(w/2 - points.semi_depth)+")");
+        .attr("transform", "translate(" + (w / 2) + "," + (w / 2 - points.semi_depth) + ")");
 
     // left iris part
     g.append("line")
         .attr("id", "left_iris")
         .attr("x1", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.x_C;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.x_A;
             }
 
         })
         .attr("y1", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.y_C;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.y_A;
             }
 
@@ -192,23 +191,23 @@ var drawEye = function (data) {
         .attr("y2", points.y_E)
         .style("stroke", "black")
         .style("stroke-width", 2)
-        .attr("transform", "translate("+(w/2)+","+(w/2)+")");
+        .attr("transform", "translate(" + (w / 2) + "," + (w / 2) + ")");
 
     // right iris part
     g.append("line")
         .attr("id", "right_iris")
         .attr("x1", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.x_D;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.x_B;
             }
 
         })
         .attr("y1", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.y_D;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.y_B;
             }
 
@@ -217,8 +216,7 @@ var drawEye = function (data) {
         .attr("y2", points.y_F)
         .style("stroke", "black")
         .style("stroke-width", 2)
-        .attr("transform", "translate("+(w/2)+","+(w/2)+")");
-
+        .attr("transform", "translate(" + (w / 2) + "," + (w / 2) + ")");
 
 
     // arc cavity
@@ -228,49 +226,49 @@ var drawEye = function (data) {
         .attr("id", "cavity")
         .attr("class", "arc")
         .attr("d", arc)
-        .attr("transform", "translate("+(w/2)+","+(w/2 - points.semi_depth)+")");
+        .attr("transform", "translate(" + (w / 2) + "," + (w / 2 - points.semi_depth) + ")");
 
 
     // To smooth the edge
     g.append("circle")
         .attr("id", "left_edge")
         .attr("cx", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.x_C;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.x_A;
             }
         })
         .attr("cy", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.y_C;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.y_A;
             }
         })
         .attr("r", 1)
         .style("fill", "black")
-        .attr("transform", "translate("+(w/2)+","+(w/2)+")");
+        .attr("transform", "translate(" + (w / 2) + "," + (w / 2) + ")");
 
     g.append("circle")
         .attr("id", "right_edge")
         .attr("cx", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.x_D;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.x_B;
             }
         })
         .attr("cy", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.y_D;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.y_B;
             }
         })
         .attr("r", 1)
         .style("fill", "black")
-        .attr("transform", "translate("+(w/2)+","+(w/2)+")");
+        .attr("transform", "translate(" + (w / 2) + "," + (w / 2) + ")");
 };
 
 var updateEye = function (data) {
@@ -278,21 +276,21 @@ var updateEye = function (data) {
     var points = computePoint(data);
 
     d3.select("#point_of_view")
-        .attr("transform", "translate("+(w/2)+","+(w/2 - points.semi_depth)+")");
+        .attr("transform", "translate(" + (w / 2) + "," + (w / 2 - points.semi_depth) + ")");
 
     d3.select("#left_iris")
         .attr("x1", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.x_C;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.x_A;
             }
 
         })
         .attr("y1", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.y_C;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.y_A;
             }
 
@@ -303,17 +301,17 @@ var updateEye = function (data) {
 
     d3.select("#right_iris")
         .attr("x1", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.x_D;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.x_B;
             }
 
         })
         .attr("y1", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.y_D;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.y_B;
             }
 
@@ -323,32 +321,32 @@ var updateEye = function (data) {
 
     d3.select("#left_edge")
         .attr("cx", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.x_C;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.x_A;
             }
         })
         .attr("cy", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.y_C;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.y_A;
             }
         });
 
     d3.select("#right_edge")
         .attr("cx", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.x_D;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.x_B;
             }
         })
         .attr("cy", function () {
-            if (Math.abs(points.rho_c - w/2) < epsilon) {
+            if (Math.abs(points.rho_c - w / 2) < epsilon) {
                 return points.y_D;
-            } else if (points.rho_c > w/2) {
+            } else if (points.rho_c > w / 2) {
                 return points.y_B;
             }
         });
@@ -357,6 +355,6 @@ var updateEye = function (data) {
 
     d3.select("#cavity")
         .attr("d", arc)
-        .attr("transform", "translate("+(w/2)+","+(w/2 - points.semi_depth)+")");
+        .attr("transform", "translate(" + (w / 2) + "," + (w / 2 - points.semi_depth) + ")");
 
 };
